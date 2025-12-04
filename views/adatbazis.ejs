@@ -1,63 +1,57 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="hu">
 <head>
-    <title>Tanösvény Adatbázis</title>
-    <link rel="stylesheet" href="/css/main.css">
+    <meta charset="UTF-8">
+    <title>Tanösvények</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: auto;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-
-<header id="header" class="alt">
-    <h1>Tanösvény adatbázis</h1>
-</header>
-
-<!-- Nemzeti parkok -->
-<section class="wrapper spotlight style1">
-    <div class="inner">
-        <h2 class="major">Nemzeti parkok</h2>
-        <div class="features">
-            <% np.forEach(n => { %>
-                <article>
-                    <h3><%= n.nev %></h3>
-                    <p>ID: <%= n.id %></p>
-                </article>
-            <% }) %>
-        </div>
-    </div>
-</section>
-
-<!-- Települések -->
-<section class="wrapper spotlight style2">
-    <div class="inner">
-        <h2 class="major">Települések</h2>
-        <% telepules.forEach(t => { %>
-            <article>
-                <h3><%= t.nev %></h3>
-                <p>NP ID: <%= t.np_id %></p>
-            </article>
-        <% }) %>
-    </div>
-</section>
-
-<!-- Tanösvény utak -->
-<section class="wrapper spotlight style3">
-    <div class="inner">
-        <h2 class="major">Tanösvény utak</h2>
-        <% ut.forEach(u => { %>
-            <article>
-                <h3><%= u.nev %></h3>
-                <p>Hossz: <%= u.hossz %> km</p>
-                <p>Település ID: <%= u.telepules_id %></p>
-            </article>
-        <% }) %>
-    </div>
-</section>
-
-
-
-<footer id="footer">
-    <p>Készítette: ...</p>
-</footer>
-
+    <h1>Tanösvények</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Azon</th>
+                <th>Név</th>
+                <th>Hossz (km)</th>
+                <th>Állomások</th>
+                <th>Idő (óra)</th>
+                <th>Idegenvezetés</th>
+                <th>Település</th>
+                <th>Nemzeti park</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% tanosvenyek.forEach(function(ut) { %>
+                <tr>
+                    <td><%= ut.azon %></td>
+                    <td><%= ut.nev %></td>
+                    <td><%= ut.hossz %></td>
+                    <td><%= ut.allomas %></td>
+                    <td><%= ut.ido %></td>
+                    <td><%= ut.vezetes ? "Igen" : "Nem" %></td>
+                    <td><%= ut.telepulesNev %></td>
+                    <td><%= ut.npNev %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
 </body>
 </html>
-

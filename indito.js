@@ -5,11 +5,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const mysql = require('mysql2');
 const crypto=require('crypto');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
-
-
-const pool = require('./db/pool');
+var session = require('express-session');
+var MySQLStore = require('express-mysql-session')(session);
 
 /*Mysql Express Session*/
 app.use(session({
@@ -225,31 +222,36 @@ app.listen(3000, function() {
     console.log('App listening on port 3000!')
 });
 
-// --- Tanosveny adatbázis menü ---
-// Adatbázis kapcsolat a tanosveny adatbázishoz
-app.get("/adatbazis", isAuth, (req, res) => {
-    const np_id = req.query.np_id; // GET paraméter a szűréshez
-    let npQuery = "SELECT * FROM np;";
-    let telepulesQuery = "SELECT * FROM telepules";
-    let utQuery = "SELECT * FROM ut";
+// Kapcsolódás a tanosveny adatbázishoz
+const tanosvenyDb = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "tanosveny"
+});
 
-    if (np_id) {
-        telepulesQuery += " WHERE np_id = " + mysql.escape(np_id);
-        utQuery += " WHERE telepules_id IN (SELECT id FROM telepules WHERE np_id = " + mysql.escape(np_id) + ")";
-    }
+tanosvenyDb.connect((err) => {
+    if (!err)
+        console.log("Connected to tanosveny DB");
+    else 
+        console.log("Connection to tanosveny DB Failed");
+});
 
-    const sql = npQuery + " " + telepulesQuery + "; " + utQuery + ";";
-
-    tanosPool.query(sql, (err, results) => {
-        if (err) {
+// Útvonal a /adatbazis oldalhoz
+app.get('/adatbazis', (req, res) => {
+    const sql = `
+        SELECT ut.*, telepules.nev AS telepulesNev, np.nev AS npNev
+        FROM ut
+        JOIN telepules ON ut.telepulesid = telepules.id
+        JOIN np ON telepules.npid = np.id
+    `;
+    tanosvenyDb.query(sql, (err, results) => {
+        if(err) {
             console.log(err);
-            return res.status(500).send("Adatbázis hiba történt.");
+            res.status(500).send('Hiba az adatbázis lekérdezés közben');
+        } else {
+            res.render('adatbazis', { tanosvenyek: results });
         }
-
-        const np = results[0];
-        const telepules = results[1];
-        const ut = results[2];
-
-        res.render("adatbazis", { np, telepules, ut, username: req.user.username, np_id });
     });
 });
+
