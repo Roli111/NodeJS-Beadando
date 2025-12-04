@@ -292,3 +292,14 @@ app.post('/kapcsolat', (req, res) => {
     });
 });
 
+app.get('/uzenetek', isAuth, (req, res) => {
+    const sql = 'SELECT * FROM messages ORDER BY datum DESC';
+    kapcsolatDb.query(sql, (err, results) => {
+        if(err){
+            console.log("Hiba az üzenetek lekérésekor:", err.sqlMessage);
+            return res.status(500).send('Hiba az üzenetek lekérésekor');
+        }
+        res.render('uzenetek', { messages: results });
+    });
+});
+

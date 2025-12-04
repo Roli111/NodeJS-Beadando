@@ -1,0 +1,22 @@
+<h1>Üzenetek</h1>
+
+<table border="1" style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Név</th>
+            <th>Email</th>
+            <th>Üzenet</th>
+            <th>Dátum</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% messages.forEach(msg => { %>
+        <tr>
+            <td><%= msg.nev %></td>
+            <td><%= msg.email %></td>
+            <td><%= msg.uzenet %></td>
+            <td><%= new Date(msg.datum).toLocaleString() %></td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
