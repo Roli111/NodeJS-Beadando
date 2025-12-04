@@ -46,9 +46,9 @@ var connection = mysql.createConnection({
   });
   connection.connect((err) => {
     if (!err)
-      console.log("Connected");
+      console.log("Connected to User DB");
     else 
-      console.log("Connection Failed");
+      console.log("Connection Failed to User DB");
 });
  
 const customFields={
@@ -254,4 +254,3 @@ app.get('/adatbazis', (req, res) => {
         }
     });
 });
-
