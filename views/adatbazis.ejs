@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Tanösvények</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: auto;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tanösvények</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Azon</th>
+                <th>Név</th>
+                <th>Hossz (km)</th>
+                <th>Állomások</th>
+                <th>Idő (óra)</th>
+                <th>Idegenvezetés</th>
+                <th>Település</th>
+                <th>Nemzeti park</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% tanosvenyek.forEach(function(ut) { %>
+                <tr>
+                    <td><%= ut.azon %></td>
+                    <td><%= ut.nev %></td>
+                    <td><%= ut.hossz %></td>
+                    <td><%= ut.allomas %></td>
+                    <td><%= ut.ido %></td>
+                    <td><%= ut.vezetes ? "Igen" : "Nem" %></td>
+                    <td><%= ut.telepulesNev %></td>
+                    <td><%= ut.npNev %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>

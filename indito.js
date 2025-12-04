@@ -221,3 +221,37 @@ app.get('/notAuthorizedAdmin', (req, res, next) => {
 app.listen(3000, function() {
     console.log('App listening on port 3000!')
 });
+
+// Kapcsolódás a tanosveny adatbázishoz
+const tanosvenyDb = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "tanosveny"
+});
+
+tanosvenyDb.connect((err) => {
+    if (!err)
+        console.log("Connected to tanosveny DB");
+    else 
+        console.log("Connection to tanosveny DB Failed");
+});
+
+// Útvonal a /adatbazis oldalhoz
+app.get('/adatbazis', (req, res) => {
+    const sql = `
+        SELECT ut.*, telepules.nev AS telepulesNev, np.nev AS npNev
+        FROM ut
+        JOIN telepules ON ut.telepulesid = telepules.id
+        JOIN np ON telepules.npid = np.id
+    `;
+    tanosvenyDb.query(sql, (err, results) => {
+        if(err) {
+            console.log(err);
+            res.status(500).send('Hiba az adatbázis lekérdezés közben');
+        } else {
+            res.render('adatbazis', { tanosvenyek: results });
+        }
+    });
+});
+
