@@ -1,11 +1,18 @@
 <html>
   <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/main.css">>
-    <title>Admin Panel</title>
+    <meta charset="UTF-8" />
+    <title>Admin panel</title>
+    <link rel="stylesheet" href="/css/main.css" />
+
   </head>
   <body>
      <%- include('top', {isAuth: true, isAdmin: true, userName:userName}); %>
      <h1>Admin panel</h1>
+     <h2>CRUD menü</h2>
+
+<ul class="crud-menu">
+    <li><a href="/admin/ut">Tanösvények kezelése</a></li>
+</ul>
+
   </body>
 </html>

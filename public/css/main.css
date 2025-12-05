@@ -116,7 +116,7 @@ input, select, textarea {
 		}
 
 	body, input, select, textarea {
-		color: #d7dedf;
+		color: #6f7577;
 		font-family: "Raleway", "Helvetica", sans-serif;
 		font-size: 15pt;
 		font-weight: 400;
@@ -3032,14 +3032,6 @@ input, select, textarea {
 				padding: 3em 1.5em 1em 1.5em ;
 			}
 
-	}
-
-	p{
-		color: #2c2c2ce5 !important;
-	}
-
-	tr{
-		color: #e8eeee !important;
 	}
 
 /* XSmall */

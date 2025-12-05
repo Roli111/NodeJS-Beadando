@@ -1,0 +1,31 @@
+<h2>Új tanösvény</h2>
+<link rel="stylesheet" href="/css/main.css" />
+
+<form action="/admin/ut/create" method="POST">
+    <label>Név:</label>
+    <input type="text" name="nev" required>
+
+    <label>Hossz (km):</label>
+    <input type="number" name="hossz" step="0.1" required>
+
+    <label>Állomások:</label>
+    <input type="number" name="allomas" required>
+
+    <label>Idő (óra):</label>
+    <input type="number" name="ido" step="0.1" required>
+
+    <label>Idegenvezetés:</label>
+    <select name="vezetes">
+        <option value="-1">Nem</option>
+        <option value="0">Igen</option>
+    </select>
+
+    <label>Település:</label>
+    <select name="telepulesid">
+        <% telepules.forEach(t => { %>
+            <option value="<%= t.id %>"><%= t.nev %></option>
+        <% }) %>
+    </select>
+
+    <button type="submit">Mentés</button>
+</form>

@@ -1,0 +1,34 @@
+<h2>Tanösvény szerkesztése</h2>
+<link rel="stylesheet" href="/css/main.css" />
+
+<form action="/admin/ut/edit/<%= ut.id %>" method="POST">
+
+    <label>Név:</label>
+    <input type="text" name="nev" value="<%= ut.nev %>" required>
+
+    <label>Hossz (km):</label>
+    <input type="number" name="hossz" step="0.1" value="<%= ut.hossz %>" required>
+
+    <label>Állomások:</label>
+    <input type="number" name="allomas" value="<%= ut.allomas %>" required>
+
+    <label>Idő (óra):</label>
+    <input type="number" name="ido" step="0.1" value="<%= ut.ido %>" required>
+
+    <label>Idegenvezetés:</label>
+    <select name="vezetes">
+        <option value="-1" <%= ut.vezetes == -1 ? "selected" : "" %>>Nem</option>
+        <option value="0" <%= ut.vezetes == 0 ? "selected" : "" %>>Igen</option>
+    </select>
+
+    <label>Település:</label>
+    <select name="telepulesid">
+        <% telepulesLista.forEach(t => { %>
+            <option value="<%= t.id %>" <%= t.id == ut.telepulesid ? "selected" : "" %>>
+                <%= t.nev %>
+            </option>
+        <% }) %>
+    </select>
+
+    <button type="submit">Mentés</button>
+</form>

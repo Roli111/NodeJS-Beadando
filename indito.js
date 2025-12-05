@@ -46,9 +46,9 @@ var connection = mysql.createConnection({
   });
   connection.connect((err) => {
     if (!err)
-      console.log("Connected to User DB");
+      console.log("Connected");
     else 
-      console.log("Connection Failed to User DB");
+      console.log("Connection Failed");
 });
  
 const customFields={
@@ -252,5 +252,149 @@ app.get('/adatbazis', (req, res) => {
         } else {
             res.render('adatbazis', { tanosvenyek: results });
         }
+    });
+});
+
+
+// Kapcsolódás a kapcsolat üzenetek 
+
+const kapcsolatDb = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "kapcsolat"
+});
+
+kapcsolatDb.connect((err) => {
+    if(!err) console.log("Kapcsolat adatbázishoz csatlakozva!");
+    else console.log("Hiba a kapcsolat adatbázishoz való csatlakozáskor:", err);
+});
+// Főoldal (példa, mainpage.ejs)
+app.get('/', (req, res) => {
+    res.render('mainpage');
+});
+// Üzenet mentése a kapcsolat adatbázisba
+app.post('/kapcsolat', (req, res) => {
+    const { nev, email, uzenet } = req.body;
+
+    if (!nev || !email || !uzenet) {
+        return res.send('Kérlek töltsd ki az összes mezőt!');
+    }
+
+    const sql = 'INSERT INTO messages (nev, email, uzenet) VALUES (?, ?, ?)';
+    kapcsolatDb.query(sql, [nev, email, uzenet], (err, results) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Hiba az üzenet mentése közben');
+        } else {
+            res.send('<h2>Köszönjük az üzeneted!</h2><p><a href="/">Vissza a főoldalra</a></p>');
+        }
+    });
+});
+
+app.get('/uzenetek', isAuth, (req, res) => {
+    const sql = 'SELECT * FROM messages ORDER BY datum DESC';
+    kapcsolatDb.query(sql, (err, results) => {
+        if(err){
+            console.log("Hiba az üzenetek lekérésekor:", err.sqlMessage);
+            return res.status(500).send('Hiba az üzenetek lekérésekor');
+        }
+        res.render('uzenetek', { messages: results });
+    });
+});
+
+// CRUD: Tanösvény lista
+app.get('/admin/ut', isAdmin, (req, res) => {
+
+    const sql = `
+        SELECT ut.*, telepules.nev AS telepulesNev 
+        FROM ut 
+        JOIN telepules ON ut.telepulesid = telepules.id
+    `;
+
+    tanosvenyDb.query(sql, (err, results) => {
+        if (err) throw err;
+        res.render('crud_ut_list', { utak: results });
+    });
+});
+
+app.get('/admin/ut/create', isAdmin, (req, res) => {
+    tanosvenyDb.query("SELECT * FROM telepules", (err, telepules) => {
+        res.render('crud_ut_create', { telepules });
+    });
+});
+
+app.post('/admin/ut/create', isAdmin, (req, res) => {
+    const sql = `
+        INSERT INTO ut (nev, hossz, allomas, ido, vezetes, telepulesid)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    tanosvenyDb.query(sql, [
+        req.body.nev,
+        req.body.hossz,
+        req.body.allomas,
+        req.body.ido,
+        req.body.vezetes,
+        req.body.telepulesid
+    ]);
+
+    res.redirect('/admin/ut');
+});
+
+app.get('/admin/ut/delete/:id', isAdmin, (req, res) => {
+    tanosvenyDb.query("DELETE FROM ut WHERE id = ?", [req.params.id]);
+    res.redirect('/admin/ut');
+});
+
+// CRUD: Tanösvény szerkesztése (LOAD FORM)
+app.get('/admin/ut/edit/:id', isAdmin, (req, res) => {
+
+    const id = req.params.id;
+
+    // 1. Lekérdezzük a kiválasztott tanösvényt
+    tanosvenyDb.query("SELECT * FROM ut WHERE id = ?", [id], (err, results) => {
+        if (err) throw err;
+
+        const ut = results[0];
+
+        // 2. Lekérdezzük a településeket a dropdownhoz
+        tanosvenyDb.query("SELECT * FROM telepules", (err2, telepulesLista) => {
+            if (err2) throw err2;
+
+            res.render("crud_ut_edit", {
+                ut,
+                telepulesLista
+            });
+        });
+    });
+});
+
+// CRUD: Tanösvény szerkesztésének mentése
+app.post('/admin/ut/edit/:id', isAdmin, (req, res) => {
+
+    const sql = `
+        UPDATE ut SET 
+            nev = ?, 
+            hossz = ?, 
+            allomas = ?, 
+            ido = ?, 
+            vezetes = ?, 
+            telepulesid = ?
+        WHERE id = ?
+    `;
+
+    tanosvenyDb.query(sql, [
+        req.body.nev,
+        req.body.hossz,
+        req.body.allomas,
+        req.body.ido,
+        req.body.vezetes,
+        req.body.telepulesid,
+        req.params.id
+    ], (err) => {
+        if (err) throw err;
+
+        res.redirect('/admin/ut');
     });
 });
